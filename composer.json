@@ -12,7 +12,7 @@
   ],
   "autoload" : {
     "psr-4" : {
-      "Rumur\\WPMailer\\": "src/"
+      "Rumur\\WordPress\\Mailer\\": "src/"
     }
   },
   "require": {
