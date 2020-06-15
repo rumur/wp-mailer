@@ -1,6 +1,6 @@
 <?php
 
-namespace Rumur\WPMailer;
+namespace Rumur\WordPress\Mailer;
 
 abstract class Mailable
 {

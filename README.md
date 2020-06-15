@@ -8,7 +8,7 @@
 ```php 
 <?php
 
-use Rumur\WPMailer\Mailer;     
+use Rumur\WordPress\Mailer\Mailer;     
 
 // This will change it for all emails that being sent via that mailer. 
 Mailer::useAlwaysFromEmail('fromemail@domain.com');  
@@ -25,8 +25,8 @@ Mailer::make(wp_get_current_user(), 'My Blog.', 'testemail@blog.com')->send($mai
   
 namespace App\Emails;  
   
-use Rumur\WPMailer\Mailable;  
-use Rumur\WPMailer\WordPressMailParams;  
+use Rumur\WordPress\Mailer\Mailable;  
+use Rumur\WordPress\Mailer\WordPressMailParams;  
   
 final class Invoice extends Mailable  
 {  
@@ -91,9 +91,9 @@ final class Invoice extends Mailable
 ```php
 <?php
 
-use Rumur\WPMailer\Mailer;
-use Rumur\WPMailer\Dispatcher;  
-use Rumur\WPMailer\WordPressMailParams;
+use Rumur\WordPress\Mailer\Mailer;
+use Rumur\WordPress\Mailer\Dispatcher;  
+use Rumur\WordPress\Mailer\WordPressMailParams;
 
 $order = OrderRepository::find(214);  
   
