@@ -1,0 +1,21 @@
+{
+  "name": "rumur/wp-mailer",
+  "description": "The wrapper on top of `wp_mail`",
+  "keywords": ["wordpress", "email"],
+  "homepage": "https://github.com/rumur/wp-mailer",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "rumur",
+      "email": "rumur.dev@gmail.com"
+    }
+  ],
+  "autoload" : {
+    "psr-4" : {
+      "Rumur\\WPMailer\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.1.0"
+  }
+}
