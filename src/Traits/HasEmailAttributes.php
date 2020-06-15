@@ -1,9 +1,9 @@
 <?php
 
-namespace Rumur\WPMailer\Traits;
+namespace Rumur\WordPress\Mailer\Traits;
 
-use Rumur\WPMailer\Utils;
-use Rumur\WPMailer\WordPressMailParams;
+use Rumur\WordPress\Mailer\Utils;
+use Rumur\WordPress\Mailer\WordPressMailParams;
 
 trait HasEmailAttributes
 {

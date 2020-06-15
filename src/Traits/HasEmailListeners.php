@@ -1,6 +1,6 @@
 <?php
 
-namespace Rumur\WPMailer\Traits;
+namespace Rumur\WordPress\Mailer\Traits;
 
 trait HasEmailListeners
 {
