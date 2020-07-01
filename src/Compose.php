@@ -196,9 +196,13 @@ class Compose
             // We just making a reference of the Compose via `use`.
             $compose = $this;
 
+            // We need to have a unique interval in order to set several emails as a scheduled task
+            // Otherwise this task will be always treated as same one and scheduler won't allow to set it.
+            $uniqCronInterval = uniqid('::pending-email::' . get_class($mailable));
+
             Schedule::call(static function () use ($compose, $mailable) {
                 $compose->send($mailable);
-            })->registerSingular('custom', 0, $timestamp);
+            })->registerSingular($uniqCronInterval, 0, $timestamp);
         }
 
         return $this;
