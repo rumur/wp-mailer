@@ -16,9 +16,6 @@ namespace Rumur\WordPress\Mailer;
  * @method static Mailer debug(\Closure $debugger)
  * @method static Mailer useCharset(string $charset)
  * @method static bool send(Mailable $mailable)
- * @method static void useAlwaysFrom(array|Recipient $from)
- * @method static void useAlwaysFromName(string $name)
- * @method static void useAlwaysFromEmail(string $email)
  */
 class Mail
 {
