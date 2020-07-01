@@ -2,9 +2,7 @@
 
 namespace Rumur\WordPress\Mailer;
 
-use Illuminate\Support\Facades\Log;
-use PhpParser\Node\Expr\Closure;
-use Rumur\WordPress\Scheduling\{Scheduler, Schedule};
+use Rumur\WordPress\Scheduling\Schedule;
 
 class Compose
 {
