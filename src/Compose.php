@@ -145,22 +145,24 @@ class Compose
      *
      * @param \DateTimeInterface|int|string $when The time when you need to run this email,
      *                                            note that this functionality uses WordPress Scheduling system.
-     * Example: @link https://www.php.net/manual/en/datetime.formats.relative.php
+     * Example: @param Mailable $mailable A mailable instance.
+     *
+     * @link https://www.php.net/manual/en/datetime.formats.relative.php
      *  - 'tomorrow'
      *  - 'next month'
      *  - 'next week'
      *  - 'last day of +2 months'
      *  - 'last day of next month'
      *  - 'last day of next month noon'
-     * @param Mailable $mailable   A mailable instance.
      *
-     * @uses Schedule
+     * @param \Closure|null $alternative    The default Scheduler could be substituted by own setup.
      *
      * @return static
+     * @uses Schedule
      */
-    public function sendLater($when, Mailable $mailable)
+    public function sendLater($when, Mailable $mailable, ?\Closure $alternative = null)
     {
-        if (! \class_exists('Rumur\\WordPress\\Scheduling\\Schedule')) {
+        if (! $alternative && ! \class_exists('Rumur\\WordPress\\Scheduling\\Schedule')) {
             throw new \RuntimeException(__FUNCTION__ . ' requires `Rumur\WordPress\Scheduling` package to operate.');
         }
 
@@ -184,13 +186,20 @@ class Compose
             );
         }
 
-        // In order to avoid an error "Using $this when not in object context"
-        // We just making a reference of the Compose via `use`.
-        $compose = $this;
+        // If there is an alternative way of set up a scheduled action,
+        // We just execute it instead of a default Scheduling package.
+        if ($alternative) {
+            $alternative($timestamp, $mailable);
+        } else {
 
-        Schedule::call(static function () use ($compose, $mailable) {
-            $compose->send($mailable);
-        })->registerSingular('custom', 0, $timestamp);
+            // In order to avoid an error "Using $this when not in object context"
+            // We just making a reference of the Compose via `use`.
+            $compose = $this;
+
+            Schedule::call(static function () use ($compose, $mailable) {
+                $compose->send($mailable);
+            })->registerSingular('custom', 0, $timestamp);
+        }
 
         return $this;
     }
