@@ -2,6 +2,10 @@
 
 namespace Rumur\WordPress\Mailer;
 
+use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Expr\Closure;
+use Rumur\WordPress\Scheduling\{Scheduler, Schedule};
+
 class Compose
 {
     use Traits\HasEmailListeners,
@@ -132,6 +136,61 @@ class Compose
         if ($condition) {
             $this->send($mailable);
         }
+
+        return $this;
+    }
+
+    /**
+     * Sends an email later when time has come.
+     *
+     * @param \DateTimeInterface|int|string $when The time when you need to run this email,
+     *                                            note that this functionality uses WordPress Scheduling system.
+     * Example: @link https://www.php.net/manual/en/datetime.formats.relative.php
+     *  - 'tomorrow'
+     *  - 'next month'
+     *  - 'next week'
+     *  - 'last day of +2 months'
+     *  - 'last day of next month'
+     *  - 'last day of next month noon'
+     * @param Mailable $mailable   A mailable instance.
+     *
+     * @uses Schedule
+     *
+     * @return static
+     */
+    public function sendLater($when, Mailable $mailable)
+    {
+        if (! \class_exists('Rumur\\WordPress\\Scheduling\\Schedule')) {
+            throw new \RuntimeException(__FUNCTION__ . ' requires `Rumur\WordPress\Scheduling` package to operate.');
+        }
+
+        $timestamp = false;
+
+        if (\is_string($when)) {
+            $timestamp = \strtotime($when, Schedule::intervals()->now());
+        }
+
+        if (\is_int($when)) {
+            $timestamp = $when;
+        }
+
+        if ($when instanceof \DateTimeInterface) {
+            $timestamp = $when->getTimestamp();
+        }
+
+        if (! $timestamp) {
+            throw new \InvalidArgumentException(
+                sprintf('Seems `$when: %s` has a wrong format or could not be converted to a timestamp.', $when)
+            );
+        }
+
+        // In order to avoid an error "Using $this when not in object context"
+        // We just making a reference of the Compose via `use`.
+        $compose = $this;
+
+        Schedule::call(static function () use ($compose, $mailable) {
+            $compose->send($mailable);
+        })->registerSingular('custom', 0, $timestamp);
 
         return $this;
     }
