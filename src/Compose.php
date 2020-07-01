@@ -160,14 +160,16 @@ class Compose
      */
     public function sendLater($when, Mailable $mailable, ?\Closure $alternative = null)
     {
-        if (! $alternative && ! \class_exists('Rumur\\WordPress\\Scheduling\\Schedule')) {
+        $hasCronPackage = \class_exists('Rumur\\WordPress\\Scheduling\\Schedule');
+
+        if (! $alternative && ! $hasCronPackage) {
             throw new \RuntimeException(__FUNCTION__ . ' requires `Rumur\WordPress\Scheduling` package to operate.');
         }
 
         $timestamp = false;
 
         if (\is_string($when)) {
-            $timestamp = \strtotime($when, Schedule::intervals()->now());
+            $timestamp = \strtotime($when, $hasCronPackage ? Schedule::intervals()->now() : time());
         }
 
         if (\is_int($when)) {
