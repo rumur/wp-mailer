@@ -6,8 +6,8 @@ use Rumur\WordPress\Scheduling\Schedule;
 
 class Compose
 {
-    use Traits\HasEmailListeners,
-        Traits\HasAttachments;
+    use Concerns\HasEmailListeners;
+    use Concerns\HasAttachments;
 
     /**
      * @var Mailer
@@ -191,7 +191,6 @@ class Compose
         if ($alternative) {
             $alternative($timestamp, $mailable);
         } else {
-
             // In order to avoid an error "Using $this when not in object context"
             // We just making a reference of the Compose via `use`.
             $compose = $this;
