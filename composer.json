@@ -23,8 +23,8 @@
   },
   "scripts": {
     "test": "./vendor/bin/phpunit -v",
-    "lint": "./vendor/bin/phpcs -v",
-    "lint-fix": "./vendor/bin/phpcbf -v"
+    "lint": "./vendor/bin/phpcs --extensions=php --standard=PSR12 ./src",
+    "lint-fix": "./vendor/bin/phpcbf --extensions=php --standard=PSR12 ./src"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.5",
