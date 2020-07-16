@@ -4,7 +4,7 @@ namespace Rumur\WordPress\Mailer;
 
 class Dispatcher
 {
-    use Traits\HasEmailListeners;
+    use Concerns\HasEmailListeners;
 
     /**
      * @var WordPressMailParams
@@ -255,19 +255,16 @@ class Dispatcher
     protected function performSuccessAction(): self
     {
         if ($this->isSent()) {
-
             $should_proceed = true;
 
             foreach ($this->successListeners() as $listener) {
-
                 // Stop of calling next listeners.
                 if (false === $should_proceed) {
                     break;
                 }
 
                 if (is_string($listener) && class_exists($listener)) {
-
-                    $l = new $listener;
+                    $l = new $listener();
 
                     if (method_exists($l, 'handle')) {
                         $should_proceed = $l->handle($this->params, $this);
@@ -293,15 +290,13 @@ class Dispatcher
         $should_proceed = true;
 
         foreach ($this->failedListeners() as $listener) {
-
             // Stop of calling next listeners.
             if (false === $should_proceed) {
                 break;
             }
 
             if (is_string($listener) && class_exists($listener)) {
-
-                $l = new $listener;
+                $l = new $listener();
 
                 if (method_exists($l, 'handle')) {
                     $should_proceed = $l->handle($error, $this->params, $this);

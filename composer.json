@@ -17,5 +17,17 @@
   },
   "require": {
     "php": ">=7.1.0"
+  },
+  "suggest": {
+    "rumur/wp-scheduling": "In order to use `sendLater` (1.1.*)."
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit -v",
+    "lint": "./vendor/bin/phpcs --extensions=php --standard=PSR12 ./src",
+    "lint-fix": "./vendor/bin/phpcbf --extensions=php --standard=PSR12 ./src"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.5",
+    "phpunit/phpunit": "^8.5"
   }
 }

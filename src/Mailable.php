@@ -4,9 +4,9 @@ namespace Rumur\WordPress\Mailer;
 
 abstract class Mailable
 {
-    use Traits\HasAttachments,
-        Traits\HasEmailListeners,
-        Traits\HasEmailAttributes;
+    use Concerns\HasAttachments;
+    use Concerns\HasEmailListeners;
+    use Concerns\HasEmailAttributes;
 
     /**
      * Builds the body for a delivering.

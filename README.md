@@ -138,7 +138,14 @@ Mailer::instance()
     
      // ⚠️ OPTIONAL ⚠️  
      // The Email could be sent when the condition is `true`.  
-     ->sendWhen($order->isPayed(), new App\Emails\Invoice($order))  
+     ->sendWhen($order->isPayed(), new App\Emails\Invoice($order)) 
+    
+     // ⚠️ OPTIONAL ⚠️  
+     // This method requires a {@link https://github.com/rumur/wp-scheduling} package to be installed 
+     // or as a third parameter you could pass a \Closure that substitute a cron setup.
+     // The Email could be postponed by the specific time.
+     // The first parameter takes \DateTimeInterface|int(timestamp)|string(any relative datetime for `strtotime`)
+     ->sendLater('tomorrow noon', new App\Emails\Invoice($order))
      
      // If sending options above did not meet your need
      // There is the main method that dispatches the email.  

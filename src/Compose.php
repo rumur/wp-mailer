@@ -2,10 +2,12 @@
 
 namespace Rumur\WordPress\Mailer;
 
+use Rumur\WordPress\Scheduling\Schedule;
+
 class Compose
 {
-    use Traits\HasEmailListeners,
-        Traits\HasAttachments;
+    use Concerns\HasEmailListeners;
+    use Concerns\HasAttachments;
 
     /**
      * @var Mailer
@@ -131,6 +133,75 @@ class Compose
     {
         if ($condition) {
             $this->send($mailable);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sends an email later when time has come.
+     *
+     * @param \DateTimeInterface|int|string $when The time when you need to run this email,
+     *                                            note that this functionality uses WordPress Scheduling system.
+     * Example: @param Mailable $mailable A mailable instance.
+     *
+     * @link https://www.php.net/manual/en/datetime.formats.relative.php
+     *  - 'tomorrow'
+     *  - 'next month'
+     *  - 'next week'
+     *  - 'last day of +2 months'
+     *  - 'last day of next month'
+     *  - 'last day of next month noon'
+     *
+     * @param \Closure|null $alternative    The default Scheduler could be substituted by own setup.
+     *
+     * @return static
+     * @uses Schedule
+     */
+    public function sendLater($when, Mailable $mailable, ?\Closure $alternative = null)
+    {
+        $hasCronPackage = \class_exists('Rumur\\WordPress\\Scheduling\\Schedule');
+
+        if (! $alternative && ! $hasCronPackage) {
+            throw new \RuntimeException(__FUNCTION__ . ' requires `Rumur\WordPress\Scheduling` package to operate.');
+        }
+
+        $timestamp = false;
+
+        if (\is_string($when)) {
+            $timestamp = \strtotime($when, $hasCronPackage ? Schedule::intervals()->now() : time());
+        }
+
+        if (\is_int($when)) {
+            $timestamp = $when;
+        }
+
+        if ($when instanceof \DateTimeInterface) {
+            $timestamp = $when->getTimestamp();
+        }
+
+        if (! $timestamp) {
+            throw new \InvalidArgumentException(
+                sprintf('Seems `$when: %s` has a wrong format or could not be converted to a timestamp.', $when)
+            );
+        }
+
+        // If there is an alternative way of set up a scheduled action,
+        // We just execute it instead of a default Scheduling package.
+        if ($alternative) {
+            $alternative($timestamp, $mailable);
+        } else {
+            // In order to avoid an error "Using $this when not in object context"
+            // We just making a reference of the Compose via `use`.
+            $compose = $this;
+
+            // We need to have a unique interval in order to set several emails as a scheduled task
+            // Otherwise this task will be always treated as same one and scheduler won't allow to set it.
+            $uniqCronInterval = uniqid('::pending-email::' . get_class($mailable));
+
+            Schedule::call(static function () use ($compose, $mailable) {
+                $compose->send($mailable);
+            })->registerSingular($uniqCronInterval, 0, $timestamp);
         }
 
         return $this;

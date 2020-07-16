@@ -46,7 +46,9 @@ class Mailer
     /**
      * Mailer constructor.
      */
-    protected function __construct(){}
+    protected function __construct()
+    {
+    }
 
     /**
      * Gets the instance of the mailer.
@@ -56,7 +58,7 @@ class Mailer
     public static function instance(): Mailer
     {
         if (null === static::$instance) {
-            static::$instance = new static;
+            static::$instance = new static();
         }
 
         return static::$instance;
@@ -187,7 +189,7 @@ class Mailer
      */
     public function send(Mailable $mailable): bool
     {
-        $dispatched = (new Dispatcher)
+        $dispatched = (new Dispatcher())
             ->withCharset(
                 $this->charset
             )->withFrom([
@@ -218,10 +220,14 @@ class Mailer
      *
      * @return bool
      */
-    public function raw($to, string $subject, string $body, array $attachments = [], array $headers = [],
+    public function raw(
+        $to,
+        string $subject,
+        string $body,
+        array $attachments = [],
+        array $headers = [],
         ?\Closure $fn = null
-    ): bool
-    {
+    ): bool {
         $locale = null;
 
         if ($to instanceof \WP_User) {
@@ -230,7 +236,7 @@ class Mailer
 
         $to = Utils::sanitizeEmails($to);
 
-        $dispatcher = (new Dispatcher)->withCharset(
+        $dispatcher = (new Dispatcher())->withCharset(
             $this->charset
         )->withFrom([
             'name' => $this->fromName(),

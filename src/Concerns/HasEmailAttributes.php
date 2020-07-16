@@ -1,6 +1,6 @@
 <?php
 
-namespace Rumur\WordPress\Mailer\Traits;
+namespace Rumur\WordPress\Mailer\Concerns;
 
 use Rumur\WordPress\Mailer\Utils;
 use Rumur\WordPress\Mailer\WordPressMailParams;
