@@ -23,11 +23,13 @@ class WordPressMailParams
      * @param null|string $locale
      */
     public function __construct(
-        string $to, string $subject, string $body,
-        array $headers = [], array $attachments = [],
+        string $to,
+        string $subject,
+        string $body,
+        array $headers = [],
+        array $attachments = [],
         ?string $locale = null
-    )
-    {
+    ) {
         $this->to = $to;
         $this->subject = $subject;
         $this->body = $body;
